@@ -4950,10 +4950,12 @@ create_scheduling_group(sstring name, float shares) noexcept {
 
 future<scheduling_group_key>
 scheduling_group_key_create(scheduling_group_key_config cfg) noexcept {
+    seastar_logger.info("scheduling_group_key_create ENTER");
     scheduling_group_key key = allocate_scheduling_group_specific_key();
     return smp::invoke_on_all([key, cfg] {
         return engine().init_new_scheduling_group_key(key, cfg);
     }).then([key] {
+        seastar_logger.info("scheduling_group_key_create LEAVE");
         return make_ready_future<scheduling_group_key>(key);
     });
 }
